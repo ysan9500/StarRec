@@ -5,6 +5,7 @@ import pandas as pd
 from openpyxl import load_workbook
 from datetime import datetime
 import time
+
 def get_keywords(day_name):
     if day_name == "Monday":
         keywords = ["Micro LED", "wearable device", "curved shape display", "VR display", "AR display", "MR display"]
@@ -17,6 +18,7 @@ def get_keywords(day_name):
     elif day_name == "Friday":
         keywords = ["2D packaging", "2.5D packaging", "3D packaging", "synthetic quarts and blankmask", "cell culture and bio filter"]
     return keywords
+
 def getNewsData(keyword:str, num:int):
     D_name = datetime.today()
     start_date = datetime(D_name.year,D_name.month,D_name.day)
@@ -50,6 +52,7 @@ def getNewsData(keyword:str, num:int):
             }
         )
     return json.dumps(news_results, indent=2)
+
 def json_to_df(results, keywords):
     for i in range(len(results)):
         if i == 0:
