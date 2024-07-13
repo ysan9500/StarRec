@@ -1,0 +1,1 @@
+# Extracts text from links
