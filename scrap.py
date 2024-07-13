@@ -8,16 +8,16 @@ import time
 
 def get_keywords(day_name):
     if day_name == "Monday":
-        keywords = ["Micro LED", "wearable device", "curved shape display", "VR display", "AR display", "MR display"]
+        return ["Micro LED", "wearable device", "curved shape display", "VR display", "AR display", "MR display"]
     elif day_name == "Tuesday":
-        keywords = ["RADAR sensor", "LIDAR sensor", "vision sensor", "wireless charging", "teraHertz bandwidth", "satellite communication antenna", "high index lense"]
+        return ["RADAR sensor", "LIDAR sensor", "vision sensor", "wireless charging", "teraHertz bandwidth", "satellite communication antenna", "high index lense"]
     elif day_name == "Wednesday":
-        keywords = ["solid eletrolyte", "electrolysis and clean hydrogen", "flow battery", "solid oxide fuel cell", "perovskite PV"]
+        return ["solid eletrolyte", "electrolysis and clean hydrogen", "flow battery", "solid oxide fuel cell", "perovskite PV"]
     elif day_name == "Thursday":
-        keywords = ["ceramic filter and fine dust particle removal", "carbon dioxide capture", "hydrogen storage and absorbent"]
+        return ["ceramic filter and fine dust particle removal", "carbon dioxide capture", "hydrogen storage and absorbent"]
     elif day_name == "Friday":
-        keywords = ["2D packaging", "2.5D packaging", "3D packaging", "synthetic quarts and blankmask", "cell culture and bio filter"]
-    return keywords
+        return ["2D packaging", "2.5D packaging", "3D packaging", "synthetic quarts and blankmask", "cell culture and bio filter"]
+    else: return []
 
 def getNewsData(keyword:str, num:int):
     D_name = datetime.today()
@@ -65,9 +65,14 @@ def json_to_df(results, keywords):
                 workBook = writer.book
                 df = pd.DataFrame(json.loads(results[i]))
                 df.to_excel(writer, sheet_name = keywords[i], index = False )
-if __name__ == "__main__":
+
+def scrap():
     day_name = datetime.today().strftime("%A")
     keywords = get_keywords(day_name)
+
+    if day_name == "Saturday" or "Sunday":
+        keywords = get_keywords("Monday")
+        
     results = []
     #keywords = ['wireless charging','wearable device', 'Curved shape display',
     #            'VR display', 'AR display', 'MR display', 'Tera Hertz bandwidth',
@@ -81,3 +86,6 @@ if __name__ == "__main__":
         lists = getNewsData(keyword, num)
         results.append(lists)
     json_to_df(results, keywords)
+
+if __name__ == "__main__":
+    scrap()
