@@ -13,7 +13,8 @@ import load
 def main():
     load_dotenv() 
     scrap.scrap()
-    docs = load.load()
+    news = load.load()
+    
 
 if __name__ == "__main__":
     main()

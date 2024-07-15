@@ -27,5 +27,4 @@ def load():
     return docs
 
 if __name__ == "__main__":
-    
     load()
