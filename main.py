@@ -13,8 +13,10 @@ import load
 def main():
     load_dotenv() 
     scrap.scrap()
-    news = load.load()
-    
+    news = load.load_news()
+    preferred_news = load.load_preference(3)
+    unpreferred_news = load.load_preference(1)
+
 
 if __name__ == "__main__":
     main()
