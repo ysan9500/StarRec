@@ -6,7 +6,7 @@ from langchain_community.document_loaders import WebBaseLoader
 import nest_asyncio
 
 
-def load():
+def load_news():
     nest_asyncio.apply()
     news_excel = 'news.xlsx'
     news_dict = pd.read_excel(news_excel, sheet_name=None)
@@ -26,5 +26,22 @@ def load():
             #print(doc)
     return docs
 
+def load_preference(num):
+    preference_dict = pd.read_csv('preference.csv')
+    preferences = preference_dict['O,X'].to_list()
+    links = preference_dict['link'].to_list()
+    docs = []
+    idx = 0
+    for preference in preferences:
+        if preference == num:
+            link = preference_dict['link'][idx]
+            loader = WebBaseLoader(link)
+            doc = loader.load()
+            docs.append(doc)
+            print(link)
+        idx += 1
+    return docs
+
+
 if __name__ == "__main__":
-    load()
+    load_preference(3)
