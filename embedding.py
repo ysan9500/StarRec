@@ -1,40 +1,37 @@
-# from sentence_transformers import SentenceTransformer
-#
-# model = SentenceTransformer('all-MiniLM-L6-v2')
-# documents = ["This is a document about AI.", "This is another document about machine learning."]
-# document_embeddings = model.encode(documents)
-#
-# print(document_embeddings)
-
-# split + embedding 
-from sentence_transformers import SentenceTransformer
+from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import SentenceTransformersTokenTextSplitter
 import load
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 
 if __name__ == "__main__":
     docs = load.load_news()
 
     # Flatten the loaded docs
-    flattened_docs = [item.page_content for sublist in docs for item in sublist]
+    docs_list = [item for sublist in docs for item in sublist]
 
     # Initialize the splitter
     splitter = SentenceTransformersTokenTextSplitter()
 
     # Split the documents
-    split_docs = [splitter.split_text(doc) for doc in flattened_docs]
+    split_docs = splitter.split_documents(docs_list)
 
-    # Flatten the split documents
-    flattened_split_docs = [item for sublist in split_docs for item in sublist]
 
     # Initialize the embedding model
-    model = SentenceTransformer('all-MiniLM-L6-v2')
+    embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-    # Generate embeddings for the split documents
-    document_embeddings = model.encode(flattened_split_docs)
+    vectorstore = FAISS.from_documents(
+        documents=split_docs,
+        embedding=embeddings
+    )
 
-    # Print the generated embeddings
-    print(document_embeddings)
+    query = "What is MicroLED TV?"
+    docs_and_scores = vectorstore.similarity_search_with_score(query)
+    content, score = docs_and_scores[0]
+    print("[Content]")
+    print(content.page_content)
+    print("\n[Score]")
+    print(score)
+
 
 # from sklearn.feature_extraction.text import TfidfVectorizer
 # from sklearn.metrics.pairwise import cosine_similarity
