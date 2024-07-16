@@ -33,7 +33,7 @@ def load_news():
 
         #TODO: Handling exceptions for requests taking too long.
 
-        loader = WebBaseLoader(links, header_template=headers, verify_ssl=True, continue_on_failure=True, bs_get_text_kwargs=)
+        loader = WebBaseLoader(links, header_template=headers, verify_ssl=True, continue_on_failure=True)
         loader.requests_per_second = 10
         doc = loader.aload()
         docs.append(doc)
