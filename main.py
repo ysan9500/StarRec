@@ -9,6 +9,7 @@ from dotenv import load_dotenv, dotenv_values
 import scrap
 import load
 import embedding
+import generate
 
 def main():
     load_dotenv() 
@@ -22,11 +23,13 @@ def main():
 
     embedding_result = embedding.embedding(news, preferred_news)
 
+    generate.summarize(embedding_result)
+
     # 결과 처리 (예시로 출력)
-    for idx, result in enumerate(embedding_result):
-        print(f"[Top {idx + 1} Most Similar Document]")
-        print(result)
-        print("\n" + "-" * 80 + "\n")
+    # for idx, result in enumerate(embedding_result):
+    #     print(f"[Top {idx + 1} Most Similar Document]")
+    #     print(result)
+    #     print("\n" + "-" * 80 + "\n")
 
 if __name__ == "__main__":
     main()
