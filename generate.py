@@ -15,7 +15,7 @@ from langchain_core.prompts import PromptTemplate
 
 from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain_text_splitters import CharacterTextSplitter
-
+import gc
 
 
 huggingface_hub.login()
@@ -34,7 +34,7 @@ def summarize(news):
         model_kwargs={"quantization_config": quantization_config},
         task="text-generation",
         pipeline_kwargs=dict(
-            max_new_tokens=512,
+            max_new_tokens=256,
             do_sample=False,
             repetition_penalty=0.7,
         ),
@@ -53,9 +53,11 @@ def summarize(news):
 
     stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
-    summary = stuff_chain.batch(news)["output_text"]
-    summaries.append(summary)
-    print(summary)
+    for doc in news:
+        summary = stuff_chain.invoke(doc)["output_text"]
+        summaries.append(summary)
+        print(summary)
+        gc.collect()
 
     # map_template = """The following is a set of documents
     # {docs}
