@@ -8,14 +8,16 @@
 from dotenv import load_dotenv, dotenv_values
 import scrap
 import load
+import generate
 
 
 def main():
     load_dotenv() 
     scrap.scrap()
-    news = load.load_news()
+    #news = load.load_news()
     preferred_news = load.load_preference(3)
-    unpreferred_news = load.load_preference(1)
+    #unpreferred_news = load.load_preference(1)
+    generate.summarize(preferred_news)
 
 
 if __name__ == "__main__":

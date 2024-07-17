@@ -4,6 +4,7 @@ import os
 from langchain_community.document_loaders import WebBaseLoader
 
 import nest_asyncio
+nest_asyncio.apply()
 headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
            'Accept-Encoding': 'gzip, deflate',
            'Accept-Language': 'en-US,en;q=0.9',
@@ -11,7 +12,7 @@ headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,imag
 
 
 def load_news():
-    nest_asyncio.apply()
+
     news_excel = 'news.xlsx'
     news_dict = pd.read_excel(news_excel, sheet_name=None)
     keywords = list(news_dict.keys())
@@ -38,6 +39,7 @@ def load_news():
         doc = loader.aload()
         docs.append(doc)
         print(links)
+        #print(doc)
     return docs
 
 def load_preference(num):
@@ -50,7 +52,8 @@ def load_preference(num):
         if preference == num:
             link = preference_dict['link'][idx]
             loader = WebBaseLoader(link)
-            doc = loader.load()
+            loader.requests_per_second = 10
+            doc = loader.aload()
             docs.append(doc)
             print(link)
         idx += 1
