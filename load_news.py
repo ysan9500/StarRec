@@ -2,8 +2,11 @@
 import pandas as pd
 import os
 from langchain_community.document_loaders import WebBaseLoader
+from langchain_core.load import dumpd, dumps, load, loads
+import json
 
 import nest_asyncio
+
 nest_asyncio.apply()
 headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
            'Accept-Encoding': 'gzip, deflate',
@@ -39,7 +42,11 @@ def load_news():
         doc = loader.aload()
         docs.append(doc)
         print(links)
+        string_representation = dumps(docs, pretty=True)
+        with open("database/news.json", "w") as fp:
+            json.dump(string_representation, fp)
         #print(doc)
+    
     return docs
 
 def load_preference(num):

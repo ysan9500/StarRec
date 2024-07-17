@@ -63,7 +63,7 @@
 
 from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import SentenceTransformersTokenTextSplitter
-import load
+import load_news
 from langchain_community.vectorstores import FAISS
 
 if __name__ == "__main__":
@@ -71,9 +71,9 @@ if __name__ == "__main__":
     user_preference = 3  # 예시로 사용자 선호도를 설정
 
     print('preferred news')
-    docs_preference = load.load_preference(user_preference)
+    docs_preference = load_news.load_preference(user_preference)
     print('news')
-    docs_news = load.load_news()
+    docs_news = load_news.load_news()
 
     # Initialize the splitter
     splitter = SentenceTransformersTokenTextSplitter()
