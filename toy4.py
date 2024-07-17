@@ -1,7 +1,7 @@
 from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import SentenceTransformersTokenTextSplitter
 from langchain_community.vectorstores import FAISS
-import load
+import load_news
 
 def embedding(docs_news, docs_preference):
     # Initialize the splitter

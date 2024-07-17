@@ -7,19 +7,22 @@
 
 from dotenv import load_dotenv, dotenv_values
 import scrap
-import load
+import load_news
 import embedding
 import generate
-
+from langchain_core.load import dumpd, dumps, load, loads
+import json
 
 def main():
     load_dotenv() 
     scrap.scrap()
-    news = load.load_news()
+    #news = load.load_news()
+    with open("database/news.json", "r") as fp:
+        news = loads(json.load(fp))
     print('preferred news')
-    preferred_news = load.load_preference(3)
+    preferred_news = load_news.load_preference(3)
     print('unpreferred news')
-    unpreferred_news = load.load_preference(1)
+    unpreferred_news = load_news.load_preference(1)
     embedding_result = embedding.embedding(news, preferred_news)
 
     generate.summarize(embedding_result)
