@@ -4,48 +4,81 @@ import load
 from langchain_community.vectorstores import FAISS
 
 if __name__ == "__main__":
-    docs = load.load_news()
+    # Load news from both preference and general sources
+    user_preference = 3  # 예시로 사용자 선호도를 설정
 
-    # Flatten the loaded docs
-    docs_list = [item for sublist in docs for item in sublist]
+    print('preferred news')
+    docs_preference = load.load_preference(user_preference)
+    print('news')
+    docs_news = load.load_news()
 
     # Initialize the splitter
     splitter = SentenceTransformersTokenTextSplitter()
 
-    # Split the documents
-    split_docs = splitter.split_documents(docs_list)
-
-
     # Initialize the embedding model
     embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-    vectorstore = FAISS.from_documents(
-        documents=split_docs,
-        embedding=embeddings
-    )
+    # Create FAISS vector stores for preference and news documents
+    vectorstore_preference = None
+    vectorstore_news = None
 
-    query = "What is MicroLED TV?"
-    docs_and_scores = vectorstore.similarity_search_with_score(query)
-    content, score = docs_and_scores[0]
-    print("[Content]")
-    print(content.page_content)
-    print("\n[Score]")
-    print(score)
+    # Process preference documents
+    if docs_preference:
+        docs_list_preference = [item for sublist in docs_preference for item in sublist]
 
+        # Split the preference documents and add original content to metadata
+        split_docs_preference = []
+        for doc in docs_list_preference:
+            parts = splitter.split_documents([doc])
+            for part in parts:
+                part.metadata['original_content'] = doc.page_content
+                split_docs_preference.append(part)
 
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# from sklearn.metrics.pairwise import cosine_similarity
-#
-# # Sample documents
-# doc1 = "The sky is blue."
-# doc2 = "The sun is bright."
-# 
-# # Vectorize the documents
-#
-# vectorizer = TfidfVectorizer()
-# tfidf_matrix = vectorizer.fit_transform([doc1, doc2])
-#
-# # Calculate cosine similarity
-#
-# cosine_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix)
-# print(f"Cosine Similarity: {cosine_sim[0][1]}")
+        # Create the FAISS vector store for preference documents
+        vectorstore_preference = FAISS.from_documents(
+            documents=split_docs_preference,
+            embedding=embeddings
+        )
+
+    # Process news documents
+    if docs_news:
+        docs_list_news = [item for sublist in docs_news for item in sublist]
+
+        # Split the news documents and add original content to metadata
+        split_docs_news = []
+        for doc in docs_list_news:
+            parts = splitter.split_documents([doc])
+            for part in parts:
+                part.metadata['original_content'] = doc.page_content
+                split_docs_news.append(part)
+
+        # Create the FAISS vector store for news documents
+        vectorstore_news = FAISS.from_documents(
+            documents=split_docs_news,
+            embedding=embeddings
+        )
+
+    # Find the most similar document in news documents to preference documents
+    most_similar_content = None
+    highest_score = -1.0
+
+    if vectorstore_preference and vectorstore_news:
+        for doc_preference in split_docs_preference:
+            query_content = doc_preference.page_content
+            docs_and_scores = vectorstore_news.similarity_search_with_score(query_content)
+            content, score = docs_and_scores[0]  # Assume the most similar one is the first one
+
+            if score > highest_score:
+                highest_score = score
+                most_similar_content = content
+
+    # Retrieve the original document content from metadata
+    if most_similar_content:
+        original_doc_content = most_similar_content.metadata.get('original_content', 'Original content not found')
+
+        print("[Most Similar Document Content]")
+        print(most_similar_content)
+        print("\n[Score]")
+        print(highest_score)
+    else:
+        print("No similar document found.")
