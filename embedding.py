@@ -1,17 +1,8 @@
 from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import SentenceTransformersTokenTextSplitter
-import load
 from langchain_community.vectorstores import FAISS
 
-if __name__ == "__main__":
-    # Load news from both preference and general sources
-    user_preference = 3  # 예시로 사용자 선호도를 설정
-
-    print('preferred news')
-    docs_preference = load.load_preference(user_preference)
-    print('news')
-    docs_news = load.load_news()
-
+def embedding(docs_news, docs_preference):
     # Initialize the splitter
     splitter = SentenceTransformersTokenTextSplitter()
 
@@ -58,27 +49,27 @@ if __name__ == "__main__":
             embedding=embeddings
         )
 
-    # Find the most similar document in news documents to preference documents
-    most_similar_content = None
-    highest_score = -1.0
+    # Find the most similar documents in news documents to preference documents
+    most_similar_contents = []
 
     if vectorstore_preference and vectorstore_news:
         for doc_preference in split_docs_preference:
             query_content = doc_preference.page_content
             docs_and_scores = vectorstore_news.similarity_search_with_score(query_content)
-            content, score = docs_and_scores[0]  # Assume the most similar one is the first one
+            most_similar_contents.extend(docs_and_scores[:5])  # Extend the list with the top 5 results
 
-            if score > highest_score:
-                highest_score = score
-                most_similar_content = content
+    # Sort by score to get the top 5 overall most similar documents
+    most_similar_contents.sort(key=lambda x: x[1], reverse=True)
+    top_5_similar_contents = most_similar_contents[:5]
 
-    # Retrieve the original document content from metadata
-    if most_similar_content:
-        original_doc_content = most_similar_content.metadata.get('original_content', 'Original content not found')
+    # Format the results for return
+    results = []
+    for content, score in top_5_similar_contents:
+        original_doc_content = content.metadata.get('original_content', 'Original content not found')
+        results.append({
+            "content": content.page_content,
+            "score": score,
+            "original_content": original_doc_content
+        })
 
-        print("[Most Similar Document Content]")
-        print(most_similar_content)
-        print("\n[Score]")
-        print(highest_score)
-    else:
-        print("No similar document found.")
+    return results
