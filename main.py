@@ -11,16 +11,15 @@ import load
 import embedding
 import generate
 
+
 def main():
     load_dotenv() 
     scrap.scrap()
     news = load.load_news()
-
     print('preferred news')
     preferred_news = load.load_preference(3)
     print('unpreferred news')
     unpreferred_news = load.load_preference(1)
-
     embedding_result = embedding.embedding(news, preferred_news)
 
     generate.summarize(embedding_result)
