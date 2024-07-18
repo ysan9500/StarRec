@@ -64,6 +64,14 @@ def load_preference(num):
             docs.append(doc)
             print(link)
         idx += 1
+
+    string_representation = dumps(docs, pretty=True)
+    if num == 3:
+        with open("database/preferred_news.json", "w") as fp:
+            json.dump(string_representation, fp)
+    else:
+        with open("database/unpreferred_news.json", "w") as fp:
+            json.dump(string_representation, fp)
     return docs
 
 

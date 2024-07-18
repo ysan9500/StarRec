@@ -15,14 +15,18 @@ import json
 
 def main():
     load_dotenv() 
-    scrap.scrap()
-    #news = load.load_news()
-    with open("database/news.json", "r") as fp:
-        news = loads(json.load(fp))
-    print('preferred news')
-    preferred_news = load_news.load_preference(3)
-    print('unpreferred news')
-    unpreferred_news = load_news.load_preference(1)
+    # scrap.scrap()
+    # news = load.load_news()
+    # preferred_news = load_news.load_preference(3)
+    # unpreferred_news = load_news.load_preference(1)
+
+    with open("database/news.json", "r") as fp1:
+        news = loads(json.load(fp1))
+    with open("database/preferred_news.json", "r") as fp2:
+        preferred_news = loads(json.load(fp2))
+    with open("database/unpreferred_news.json", "r") as fp3:
+        unpreferred_news = loads(json.load(fp3))
+    
     embedding_result = embedding.embedding(news, preferred_news)
 
     generate.summarize(embedding_result)
