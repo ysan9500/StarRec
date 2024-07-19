@@ -11,6 +11,14 @@ from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain_text_splitters import CharacterTextSplitter
 import gc
 
+
+from langchain_core.load import dumpd, dumps, load, loads
+import json
+
+
+from langchain.schema import Document
+
+
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
@@ -49,10 +57,19 @@ def summarize(news):
 
     stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
-    for doc in news:
+
+    print(f"Type of news: {type(news)}")
+    for doc in news[:5]:
+        # debugging
+        print(f"doc Type: {type(doc)}")
+        # print(doc)
+
+        # "input_documents" 키를 사용하여 StuffDocumentsChain에 올바른 입력 제공
         summary = stuff_chain.invoke(doc)["output_text"]
         summaries.append(summary)
-        print(summary)
+        # print(summary)
+
+
         gc.collect()
 
 
@@ -109,5 +126,8 @@ def summarize(news):
 
 if __name__=='__main__':
     dotenv.load_dotenv()
-    response = summarize()
-    print(response.content)
+    with open("database/preferred_news.json", "r") as fp2:
+        preferred_news = loads(json.load(fp2))
+    response = summarize(preferred_news)
+    print(type(response))
+    print(response)
