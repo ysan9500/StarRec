@@ -44,16 +44,20 @@ import json
 
 
 def main():
-    load_dotenv()
-    scrap.scrap()
+    load_dotenv() 
+    # scrap.scrap()
+    # news = load.load_news()
+    # preferred_news = load_news.load_preference(3)
+    # unpreferred_news = load_news.load_preference(1)
 
-    # 뉴스 데이터를 로드
-    with open("database/news.json", "r") as fp:
-        news = loads(json.load(fp))
-
-    # 선호 뉴스와 비선호 뉴스 로드
-    preferred_news = load_news.load_preference(3)
-    unpreferred_news = load_news.load_preference(1)
+    with open("database/news.json", "r") as fp1:
+        news = loads(json.load(fp1))
+    with open("database/preferred_news.json", "r") as fp2:
+        preferred_news = loads(json.load(fp2))
+    with open("database/unpreferred_news.json", "r") as fp3:
+        unpreferred_news = loads(json.load(fp3))
+    #
+    # embedding_result = embedding.embedding(news, preferred_news)
 
     # 임베딩 처리
     embedding_result_preferred = embedding.embedding(news, preferred_news)
