@@ -50,21 +50,10 @@ def summarize(news):
     stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
     for doc in news:
-        # debugging
-        print(f"Document Type: {type(doc)}")
-        print(f"Document: {doc}")
-
-        if isinstance(doc, Document):
-            # "input_documents" 키를 사용하여 StuffDocumentsChain에 올바른 입력 제공
-            summary = stuff_chain.invoke({"input_documents": [doc]})["output_text"]
-            summaries.append(summary)
-            print(summary)
-        else:
-            print(f"Skipping non-Document type: {doc}")
-
+        summary = stuff_chain.invoke(doc)["output_text"]
+        summaries.append(summary)
+        print(summary)
         gc.collect()
-
-    return summaries
 
 
     # map_template = """The following is a set of documents

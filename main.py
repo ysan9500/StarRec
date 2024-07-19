@@ -13,35 +13,6 @@ import generate
 from langchain_core.load import dumpd, dumps, load, loads
 import json
 
-# def main():
-#     load_dotenv()
-#     scrap.scrap()
-#     #news = load.load_news()
-#     with open("database/news.json", "r") as fp:
-#         news = loads(json.load(fp))
-#     print('preferred news')
-#     preferred_news = load_news.load_preference(3)
-#     print('unpreferred news')
-#     unpreferred_news = load_news.load_preference(1)
-#     embedding_result = embedding.embedding(news, preferred_news)
-#
-#     # # 디버깅: embedding_result의 구조 출력
-#     # print(f"Embedding Result Type: {type(embedding_result)}")
-#     # if embedding_result:
-#     #     print(f"First Element Type: {type(embedding_result[0])}")
-#     #     print(f"First Element: {embedding_result[0]}")
-#
-#     generate.summarize(embedding_result)
-#
-#     # 결과 처리 (예시로 출력)
-#     # for idx, result in enumerate(embedding_result):
-#     #     print(f"[Top {idx + 1} Most Similar Document]")
-#     #     print(result)
-#     #     print("\n" + "-" * 80 + "\n")
-#
-# if __name__ == "__main__":
-#     main()
-
 
 def main():
     load_dotenv() 
