@@ -13,7 +13,10 @@ import gc
 import json
 from langchain_core.documents import Document
 
+from langchain_core.messages import HumanMessage, SystemMessage
 
+import nest_asyncio
+nest_asyncio.apply()
 
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -40,15 +43,6 @@ def summarize(news):
 
     summaries = []
 
-    # Define prompt
-    prompt_template = """You are a professional newswriter. 
-    You will be given a content of a webpage that contains news article in English. DO NOT repeat my prompt. 
-    Write a concise and easy summary of the main news in 3 sentences. Answer in English. 
-    Following is a news to summarize:
-    "{context}"
-    CONCISE SUMMARY:"""
-    prompt = PromptTemplate.from_template(prompt_template)
-    chain = create_stuff_documents_chain(llm, prompt)
 
 
     print(f"Type of news: {type(news)}")
@@ -56,8 +50,19 @@ def summarize(news):
         # debugging
         print(f"doc Type: {type(doc)}")
         # print(doc)
+        messages = [
+            #SystemMessage(content="""You are a professional newswriter. 
+            #You will be given a content of a webpage that contains news article in English. DO NOT repeat my prompt. 
+            #Write a concise and easy summary of the main news in 3 sentences. Answer in English. 
+            #Following is a news to summarize:"""),
+            SystemMessage(content="""You are a professional newswriter. 
+            Summarize belowed contents in 3 sentences:"""),
+            HumanMessage(content=doc.page_content),
+        ]
 
-        summary = chain.invoke({"context": [doc]})
+        messages.
+
+        summary = llm.invoke(messages)
         summaries.append(Document(page_content=summary))
         # print(summary)
 
@@ -100,8 +105,19 @@ def cleanup(news):
         # debugging
         print(f"doc Type: {type(doc)}")
         # print(doc)
+        messages = [
+            SystemMessage(content="""You will be provided scraped news from a website in English. It contains one main news along with other unnecessary texts. 
+                Remove all the unnecessary parts, while preserving the main article. DO NOT EDIT OR SUMMARIZE THE MAIN ARTICLE!!
+                DO NOT repeat my prompt. 
+                Following is a news to clean up:"""),
+            HumanMessage(content=doc.page_content),
+        ]
 
-        result = chain.invoke({"context": [doc]})
+       
+        result = llm.invoke(input=messages)
+        print('_____')
+        print(result)
+
         cleaned.append(Document(page_content=result))
         # print(summary)
         gc.collect()
@@ -117,10 +133,10 @@ if __name__=='__main__':
     dotenv.load_dotenv()
     with open("database/preferred_news.json", "r") as fp2:
         preferred_news = loads(json.load(fp2))
-    # with open("database/cleaned_temp.json", "r") as fp:
-    #     clean_news = loads(json.load(fp))
-    clean_news = cleanup(preferred_news)
-    print(type(clean_news[0]))
+    with open("database/cleaned_temp.json", "r") as fp:
+        clean_news = loads(json.load(fp))
+    # clean_news = cleanup(preferred_news)
+    #print(clean_news[0].page_content)
     summaries = summarize(clean_news)
     print(type(summaries))
-    print(summaries)
+    print(summaries[1])
