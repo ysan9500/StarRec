@@ -42,8 +42,8 @@ def summarize(news):
 
     # Define prompt
     prompt_template = """You are a professional newswriter. 
-    You will be given a content of a webpage that contains news article. DO NOT repeat my prompt. 
-    Write a concise and easy summary of the main news in 3 sentences. 
+    You will be given a content of a webpage that contains news article in English. DO NOT repeat my prompt. 
+    Write a concise and easy summary of the main news in 3 sentences. Answer in English. 
     Following is a news to summarize:
     "{context}"
     CONCISE SUMMARY:"""
@@ -87,7 +87,7 @@ def cleanup(news):
 
     cleaned = []
 
-    prompt_template = """You will be provided scraped news from a website. It contains one main news along with other unnecessary texts. 
+    prompt_template = """You will be provided scraped news from a website in English. It contains one main news along with other unnecessary texts. 
     Remove all the unnecessary parts, while preserving the main article. DO NOT EDIT OR SUMMARIZE THE MAIN ARTICLE!!
     DO NOT repeat my prompt. 
     Following is a news to clean up:

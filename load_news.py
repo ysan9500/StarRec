@@ -6,6 +6,7 @@ import json
 from cleantext import clean
 import nest_asyncio
 import bs4
+from langchain_core.documents import Document
 
 nest_asyncio.apply()
 headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -28,8 +29,9 @@ def load_news():
         loader = WebBaseLoader(links, header_template=headers, verify_ssl=True, continue_on_failure=True,)
         loader.requests_per_second = 10
         docs = loader.aload()
-
-        string_representation = dumps(docs.replace("\n",""), pretty=True)
+        docs_text = [doc.page_content.replace("\n","") for doc in docs]
+        docs = [Document(page_content=doc_text) for doc_text in docs_text]
+        string_representation = dumps(docs, pretty=True)
         with open("database/news.json", "w") as fp:
             json.dump(string_representation, fp)
         #print(doc)
@@ -52,6 +54,8 @@ def load_preference(num):
     loader = WebBaseLoader(selected_links, header_template=headers, verify_ssl=True, continue_on_failure=True,)
     loader.requests_per_second = 10
     docs = loader.aload()
+    docs_text = [doc.page_content.replace("\n","") for doc in docs]
+    docs = [Document(page_content=doc_text) for doc_text in docs_text]
 
     string_representation = dumps(docs, pretty=True)
     if num == 3:
@@ -64,6 +68,6 @@ def load_preference(num):
 
 
 if __name__ == "__main__":
-    # load_news()
+    #load_news()
     load_preference(3)
     load_preference(1)
