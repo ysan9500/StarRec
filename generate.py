@@ -11,11 +11,13 @@ from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain_text_splitters import CharacterTextSplitter
 import gc
 
+
 from langchain_core.load import dumpd, dumps, load, loads
 import json
 
 
 from langchain.schema import Document
+
 
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -55,6 +57,7 @@ def summarize(news):
 
     stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
+
     print(f"Type of news: {type(news)}")
     for doc in news[:5]:
         # debugging
@@ -69,7 +72,6 @@ def summarize(news):
         gc.collect()
 
     return summaries
-
 
     # map_template = """The following is a set of documents
     # {docs}
