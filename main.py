@@ -47,8 +47,9 @@ def main():
     #     print(f"First Element: {filtered_embedding_result[0]}")
 
     # 요약 생성
-    summary = generate.summarize(embedding_result_preferred)
-    print(summary)
+    summaries = generate.summarize(embedding_result_preferred)
+    for summary in summaries:
+        print(summary)
 
 if __name__ == "__main__":
     main()
