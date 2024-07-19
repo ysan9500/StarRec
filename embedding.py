@@ -83,4 +83,6 @@ if __name__=='__main__':
         unpreferred_news = loads(json.load(fp3))
 
     embedding_result = embedding(news, preferred_news)
+    print(type(embedding_result))
+    print(type(embedding_result[0]))
     print(len(embedding_result))
