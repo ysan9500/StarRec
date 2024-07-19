@@ -95,8 +95,3 @@ if __name__ == '__main__':
     print(type(embedding_result[0]))
     print(len(embedding_result))
     print(embedding_result)
-
-    # for idx, result in enumerate(embedding_result):
-    #     print(f"[Top {idx + 1} Most Similar Document]")
-    #     print(result)
-    #     print("\n" + "-" * 80 + "\n")

@@ -40,7 +40,7 @@ import os
 
 # 파일 경로 설정
 file_path = "filtered_embedding_result_summary.json"
-
+# summary 추가 
 # 파일이 존재하는지 확인
 if not os.path.exists(file_path):
     st.error(f"File not found: {file_path}")

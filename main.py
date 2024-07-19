@@ -48,5 +48,6 @@ def main():
     print(summary)
     print('summary type:', type(summary))
 
+
 if __name__ == "__main__":
     main()
