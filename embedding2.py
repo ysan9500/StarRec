@@ -1,22 +1,43 @@
-from langchain.embeddings import SentenceTransformerEmbeddings
-from langchain_text_splitters import SentenceTransformersTokenTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
+from langchain_community.retrievers import BM25Retriever
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import SentenceTransformersTokenTextSplitter
 import load_news
 
 from langchain_core.load import dumpd, dumps, load, loads
 import json
+import os
+os.environ['OPENAI_API_KEY']=''
 
 def embedding(docs_news, docs_preference):
     # Initialize the splitter
     splitter = SentenceTransformersTokenTextSplitter()
 
     # Initialize the embedding model
-    embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+    embeddings = OpenAIEmbeddings()
 
-    # Create FAISS vector store for news documents
+    # Create FAISS vector stores for preference and news documents
+    vectorstore_preference = None
     vectorstore_news = None
+
+    # Process preference documents
+    if docs_preference:
+        docs_list_preference = [item for sublist in docs_preference for item in sublist]
+
+        # Split the preference documents and add original content to metadata
+        split_docs_preference = []
+        for doc in docs_list_preference:
+            parts = splitter.split_documents([doc])
+            for part in parts:
+                part.metadata['original_content'] = doc.page_content
+                split_docs_preference.append(part)
+
+        # Create the FAISS vector store for preference documents
+        vectorstore_preference = FAISS.from_documents(
+            documents=split_docs_preference,
+            embedding=embeddings
+        )
 
     # Process news documents
     if docs_news:
@@ -36,43 +57,32 @@ def embedding(docs_news, docs_preference):
             embedding=embeddings
         )
 
-    # Create BM25 retriever for preference documents
-    bm25_retriever = None
-    if docs_preference:
-        docs_list_preference = [item for sublist in docs_preference for item in sublist]
+        # Create BM25 retriever for news documents
+        bm25_retriever = BM25Retriever.from_documents(docs_list_news)
 
-        # Create BM25 retriever
-        bm25_retriever = BM25Retriever.from_texts(
-            [doc.page_content for doc in docs_list_preference],
-            metadatas=[doc.metadata for doc in docs_list_preference]
-        )
-        bm25_retriever.k = 5
+    # Create the ensemble retriever
+    retrievers = []
+    if vectorstore_preference and vectorstore_news:
+        faiss_retriever = vectorstore_news.as_retriever()
+        retrievers.append(faiss_retriever)
+    if bm25_retriever:
+        retrievers.append(bm25_retriever)
 
-    # Create the FAISS retriever for news documents
-    faiss_retriever = None
-    if vectorstore_news:
-        faiss_retriever = vectorstore_news.as_retriever(search_kwargs={"k": 5})
-
-    # Initialize the ensemble retriever
-    ensemble_retriever = None
-    if bm25_retriever and faiss_retriever:
-        ensemble_retriever = EnsembleRetriever(
-            retrievers=[bm25_retriever, faiss_retriever],
-            weights=[0.5, 0.5]
-        )
+    ensemble_retriever = EnsembleRetriever(retrievers=retrievers)
 
     # Find the most similar documents in news documents to preference documents
     most_similar_contents = []
 
     if ensemble_retriever:
-        for doc_preference in docs_preference:
+        for doc_preference in split_docs_preference:
             query_content = doc_preference.page_content
-            similar_docs = ensemble_retriever.invoke(query_content)
+            similar_docs = ensemble_retriever.invoke(query_content, k=5)
             most_similar_contents.extend(similar_docs)
 
     return most_similar_contents[:5]
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     with open("database/news.json", "r") as fp1:
         news = loads(json.load(fp1))
     with open("database/preferred_news.json", "r") as fp2:
