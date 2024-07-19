@@ -104,6 +104,7 @@
 from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import SentenceTransformersTokenTextSplitter
 from langchain_community.vectorstores import FAISS
+import load_news
 
 def embedding(docs_news, docs_preference):
     # Initialize the splitter
@@ -159,6 +160,25 @@ def embedding(docs_news, docs_preference):
         for doc_preference in split_docs_preference:
             query_content = doc_preference.page_content
             similar_docs = vectorstore_news.similarity_search(query_content, k=5)
+
+            # 디버깅: similar_docs의 구조 출력
+            #print(f"similar_docs: {similar_docs}")
+
+            # Extract the Document objects from similar_docs if necessary
+            try:
+                similar_docs = [doc for doc, score in similar_docs]
+            except ValueError:
+                similar_docs = similar_docs  # assume it's already a list of Document objects
+
             most_similar_contents.extend(similar_docs)
 
     return most_similar_contents
+
+if __name__=='__main__':
+    news = load_news.load_news()
+
+    print('preferred news')
+    preferred_news = load_news.load_preference(3)
+    print('unpreferred news')
+
+    embedding_result = embedding(news, preferred_news)

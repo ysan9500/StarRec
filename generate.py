@@ -11,7 +11,7 @@ from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain_text_splitters import CharacterTextSplitter
 import gc
 
-
+from langchain.schema import Document
 huggingface_hub.login()
 
 quantization_config = BitsAndBytesConfig(
@@ -19,6 +19,8 @@ quantization_config = BitsAndBytesConfig(
     bnb_4bit_quant_type="nf4",
     bnb_4bit_compute_dtype="float16",
     bnb_4bit_use_double_quant=True)
+
+from langchain.schema import Document  # 필요한 임포트 추가
 
 def summarize(news):
     # Define LLM chain
@@ -51,10 +53,22 @@ def summarize(news):
     stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
 
     for doc in news:
-        summary = stuff_chain.invoke(doc)["output_text"]
-        summaries.append(summary)
-        print(summary)
+        # debugging
+        print(f"Document Type: {type(doc)}")
+        print(f"Document: {doc}")
+
+        if isinstance(doc, Document):
+            # "input_documents" 키를 사용하여 StuffDocumentsChain에 올바른 입력 제공
+            summary = stuff_chain.invoke({"input_documents": [doc]})["output_text"]
+            summaries.append(summary)
+            print(summary)
+        else:
+            print(f"Skipping non-Document type: {doc}")
+
         gc.collect()
+
+    return summaries
+
 
     # map_template = """The following is a set of documents
     # {docs}
