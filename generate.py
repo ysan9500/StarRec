@@ -62,7 +62,7 @@ def summarize(news):
         # print(doc)
 
         # "input_documents" 키를 사용하여 StuffDocumentsChain에 올바른 입력 제공
-        summary = stuff_chain.invoke(doc)["output_text"]
+        summary = stuff_chain.invoke([doc])["output_text"]
         summaries.append(summary)
         # print(summary)
 
