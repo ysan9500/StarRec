@@ -11,9 +11,6 @@ from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain_text_splitters import CharacterTextSplitter
 import gc
 
-from langchain.schema import Document
-huggingface_hub.login()
-
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
