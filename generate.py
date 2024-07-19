@@ -59,19 +59,20 @@ def summarize(news):
 
 
     print(f"Type of news: {type(news)}")
-    for doc in news[:5]:
-        # debugging
-        print(f"doc Type: {type(doc)}")
-        # print(doc)
-
-        # "input_documents" 키를 사용하여 StuffDocumentsChain에 올바른 입력 제공
-        summary = stuff_chain.invoke(doc)["output_text"]
-        summaries.append(summary)
-        # print(summary)
-
-
-        gc.collect()
-
+    summary = stuff_chain.invoke(news)["output_text"]
+    # for doc in news[:5]:
+    #     # debugging
+    #     print(f"doc Type: {type(doc)}")
+    #     # print(doc)
+    #
+    #     # "input_documents" 키를 사용하여 StuffDocumentsChain에 올바른 입력 제공
+    #     summary = stuff_chain.invoke(doc)["output_text"]
+    #     summaries.append(summary)
+    #     # print(summary)
+    # #
+    #
+    #     gc.collect()
+    return summary
 
     # map_template = """The following is a set of documents
     # {docs}

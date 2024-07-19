@@ -34,21 +34,21 @@ def main():
     embedding_result_preferred = embedding.embedding(news, preferred_news)
     embedding_result_unpreferred = embedding.embedding(news, unpreferred_news)
 
-    # 선호 뉴스와 비선호 뉴스의 중복 제거
-    unpreferred_set = {doc.page_content for doc in embedding_result_unpreferred}
-    filtered_embedding_result = [
-        doc for doc in embedding_result_preferred
-        if doc.page_content not in unpreferred_set
-    ]
-
-    # 디버깅: 중복 제거된 결과 확인
-    print(f"Filtered Embedding Result Count: {len(filtered_embedding_result)}")
-    if filtered_embedding_result:
-        print(f"First Element: {filtered_embedding_result[0]}")
+    # # 선호 뉴스와 비선호 뉴스의 중복 제거
+    # unpreferred_set = {doc.page_content for doc in embedding_result_unpreferred}
+    # filtered_embedding_result = [
+    #     doc for doc in embedding_result_preferred
+    #     if doc.page_content not in unpreferred_set
+    # ]
+    #
+    # # 디버깅: 중복 제거된 결과 확인
+    # print(f"Filtered Embedding Result Count: {len(filtered_embedding_result)}")
+    # if filtered_embedding_result:
+    #     print(f"First Element: {filtered_embedding_result[0]}")
 
     # 요약 생성
-    generate.summarize(filtered_embedding_result)
-
+    summary = generate.summarize(embedding_result_preferred)
+    print(summary)
 
 if __name__ == "__main__":
     main()

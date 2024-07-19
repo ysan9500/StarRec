@@ -65,8 +65,6 @@ def embedding(docs_news, docs_preference):
 
     return most_similar_contents[:5]
 
-
-
 if __name__=='__main__':
     with open("database/news.json", "r") as fp1:
         news = loads(json.load(fp1))
@@ -79,6 +77,7 @@ if __name__=='__main__':
     print(type(embedding_result))
     print(type(embedding_result[0]))
     print(len(embedding_result))
+    print(embedding_result)
 
 
     # for idx, result in enumerate(embedding_result):
