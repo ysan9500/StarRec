@@ -1,3 +1,4 @@
+#embedding2.py
 from langchain.retrievers import EnsembleRetriever
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
@@ -23,11 +24,11 @@ def embedding(docs_news, docs_preference):
 
     # Process preference documents
     if docs_preference:
-        docs_list_preference = [item for sublist in docs_preference for item in sublist]
+        #docs_list_preference = [item for sublist in docs_preference for item in sublist]
 
         # Split the preference documents and add original content to metadata
         split_docs_preference = []
-        for doc in docs_list_preference:
+        for doc in docs_preference:
             parts = splitter.split_documents([doc])
             for part in parts:
                 part.metadata['original_content'] = doc.page_content
@@ -41,11 +42,11 @@ def embedding(docs_news, docs_preference):
 
     # Process news documents
     if docs_news:
-        docs_list_news = [item for sublist in docs_news for item in sublist]
+        #docs_list_news = [item for sublist in docs_news for item in sublist]
 
         # Split the news documents and add original content to metadata
         split_docs_news = []
-        for doc in docs_list_news:
+        for doc in docs_news:
             parts = splitter.split_documents([doc])
             for part in parts:
                 part.metadata['original_content'] = doc.page_content
@@ -58,7 +59,7 @@ def embedding(docs_news, docs_preference):
         )
 
         # Create BM25 retriever for news documents
-        bm25_retriever = BM25Retriever.from_documents(docs_list_news)
+        bm25_retriever = BM25Retriever.from_documents(docs_news)
 
     # Create the ensemble retriever
     retrievers = []
