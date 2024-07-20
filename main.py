@@ -9,7 +9,7 @@ from dotenv import load_dotenv, dotenv_values
 import scrap
 import load_news
 import embedding
-import generate
+import generate3
 from langchain_core.load import dumpd, dumps, load, loads
 import json
 
@@ -34,8 +34,8 @@ def main():
     print(type(unpreferred_news[0]))
 
     # 임베딩 처리
-    embedding_result_preferred = embedding.embedding(news, preferred_news)
-    embedding_result_unpreferred = embedding.embedding(news, unpreferred_news)
+    # embedding_result_preferred = embedding.embedding(news, preferred_news)
+    # embedding_result_unpreferred = embedding.embedding(news, unpreferred_news)
 
     # # 선호 뉴스와 비선호 뉴스의 중복 제거
     # unpreferred_set = {doc for doc in embedding_result_unpreferred}
@@ -50,10 +50,19 @@ def main():
     #     print(f"First Element: {filtered_embedding_result[0]}")
 
     # 요약 생성
-    cleaned = generate.cleanup(embedding_result_preferred)
-    summaries = generate.summarize(cleaned)
-    for summary in summaries:
-        print(summary)
-
+    
+    #generate3.summarize(embedding_result_preferred)
+    with open("database/summaries.json", "r") as fp:
+        summaries = json.load(fp)
+        summary_list = summaries.split("SUMMARY:", 5)[1:]
+        idx = 0
+        for smry in summary_list:
+            smry2 = smry.split("Write a summary of the following text delimited by triple backticks.")[0]
+            smry3 = smry2.replace("\\n", "").replace("  ", "").replace("THE", "")
+            summary_list[idx] = smry3
+            idx += 1
+        string_representation = dumps(summary_list, pretty=True)
+        with open("database/summary_list.json", "w") as fp:
+            json.dump(string_representation, fp)
 if __name__ == "__main__":
     main()

@@ -32,9 +32,9 @@ def summarize(news):
         task="text-generation",
         # task="summarization",
         pipeline_kwargs=dict(
-            max_new_tokens=1024,
+            max_new_tokens=256,
             do_sample=False,
-            repetition_penalty=1.5,
+            repetition_penalty=0.7,
         ),
         device=0,
         batch_size=1,
@@ -49,8 +49,8 @@ def summarize(news):
         # debugging
         print(f"doc Type: {type(doc)}")
         # print(doc)
-        messages = [ {"role":"system","content": "you are a professional newswirter. summrize belowed content in 3 sentences"}
-                {"role":"user","content":{doc.page_content}
+        messages = [ {"role":"system","content": "you are a professional newswirter. summrize belowed content in 3 sentences"},
+                {"role":"user","content":doc.page_content}
 
                 ]
 #        messages = [
@@ -65,8 +65,8 @@ def summarize(news):
 
 
         summary = llm.invoke(messages)
-        summaries.append(Document(page_content=summary))
-        # print(summary)
+        # summaries.append(Document(page_content=summary))
+        print(summary)
 
         gc.collect()
 
@@ -139,6 +139,6 @@ if __name__=='__main__':
         clean_news = loads(json.load(fp))
     # clean_news = cleanup(preferred_news)
     #print(clean_news[0].page_content)
-    summaries = summarize(clean_news)
+    summaries = summarize(preferred_news)
     print(type(summaries))
-    print(summaries[1])
+    print(summaries[0])

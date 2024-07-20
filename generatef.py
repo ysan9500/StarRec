@@ -49,20 +49,19 @@ def summarize(news):
     for doc in news[2:3]:
         # debugging
         # print(doc)
-        #prompt = ChatPromptTemplate.from_messages([
-        #    ("system", "you are a professional newswirter. summrize belowed content in 3 sentences"),
-        #    ("user","{input}")])
-        messages = [{"role":"system","content":"you are a professional news writter. summerize belowed news within 3 words. "},
-                {"role":"user","content":"vHorses have a funny way of keeping us on our toes, don’t they? Just when you think things are going one way, we constantly have to pivot another way.Our last update saw the big horse Mr Nobility getting ready to display his progress at the LongRun open house. Unfortunately, he had other plans. The day before the open house he had blood and mucus coming out of his nose. The next day, the morning of the open house, more mucus, coughing, and lots of blood pouring out of his nose. The veterinarian came out for an emergency endoscopy to see what was going on, and unfortunately didn’t really find much other than a very irritated soft palate and a lot of bloody mucus in the throat. Needless to say, we did not ride at the open house.\t\tMr Nobility naps in the weirdest places. (Courtesy of Lauren Millet-Simpson)\tSince we are getting down to the wire as such, we really needed to start going off property and experimenting with different adventures. My coach booked a schooling time at a local show barn for myself and her other student who is going to the Makeover for an off-property ride.The week leading up to going off property was one of the most frustrating weeks for us in a while."}
-        ]
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "you are a professional newswirter. summrize belowed content in 3 sentences"),
+            ("user","{input}")])
+        #messages = [{"role":"system","content":"you are a professional news writter. summerize belowed news within 3 words. "},
+#                {"role":"user","content":"vHorses have a funny way of keeping us on our toes, don’t they? Just when you think things are going one way, we constantly have to pivot another way.Our last update saw the big horse Mr Nobility getting ready to display his progress at the LongRun open house. Unfortunately, he had other plans. The day before the open house he had blood and mucus coming out of his nose. The next day, the morning of the open house, more mucus, coughing, and lots of blood pouring out of his nose. The veterinarian came out for an emergency endoscopy to see what was going on, and unfortunately didn’t really find much other than a very irritated soft palate and a lot of bloody mucus in the throat. Needless to say, we did not ride at the open house.\t\tMr Nobility naps in the weirdest places. (Courtesy of Lauren Millet-Simpson)\tSince we are getting down to the wire as such, we really needed to start going off property and experimenting with different adventures. My coach booked a schooling time at a local show barn for myself and her other student who is going to the Makeover for an off-property ride.The week leading up to going off property was one of the most frustrating weeks for us in a while."}
+#        ]
 
-        print(messages)
-        #chain = prompt | llm | output_parser
-        #aa = chain.invoke({"input":doc.page_content})
-        print('---')
-        oo = llm.invoke(messages)
+#        print(messages)
+        chain = prompt | llm | output_parser
+        aa = chain.invoke({"input":doc.page_content})
+        print('---',aa)
+        #print(llm.invoke(messages))
 
-        print(oo)
         #summaries.append(Document(page_content=summary))
         # print(summary)
 
