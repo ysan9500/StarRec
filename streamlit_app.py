@@ -138,7 +138,6 @@ else:
             """,
             unsafe_allow_html=True
         )
-        idx0 = 0
         for doc in filtered_embedding_result_json:
             # JSON 데이터의 metadata에서 title, source, summary 추출
             metadata = doc.get("kwargs", {}).get("metadata", {})
@@ -148,9 +147,6 @@ else:
                 publish_date, publisher = extract_news_details(link)
             else:
                 publish_date, publisher = "발행 날짜 없음", "출판사 없음"
-            
-            with open("database/summary_list.json", "w") as fp:
-                summary_list = json.load(fp)
             st.markdown(
                 f"""
                 <div class="news-container">
@@ -160,12 +156,11 @@ else:
                         <p>Publisher: {publisher}</p>
                     </div>
                     <div class="news-right">
-                        <p>{summary_list[idx0]}</p>
+                        <p>뉴스 요약 공간</p>
                     </div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            idx0 += 1
     else:
         st.error("Unexpected JSON data structure.")
