@@ -132,6 +132,7 @@ else:
                 star += "⭐"
 
             ttt = summary_list[idx0].replace("\",","").replace("\"", "").replace("[","").replace("]","").strip("[]\\n")
+            cols = st.columns(2)
             st.markdown(
                 f"""
                 <div class="news-container">
@@ -148,6 +149,15 @@ else:
                 """,
                 unsafe_allow_html=True
             )
+            with st.form("my_form" + f"{idx0}"):
+                st.write("Rate your interest!")
+                slider_val = st.slider("Interest")
+
+                # Every form must have a submit button.
+                submitted = st.form_submit_button("Submit")
+                if submitted:
+                    st.write("Interest", slider_val)
             idx0 += 1
+            
     else:
         st.error("Unexpected JSON data structure.")
