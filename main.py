@@ -35,11 +35,14 @@ def main():
     # print(type(unpreferred_news[0]))
 
     # # 임베딩 처리
-    # embedding_result_preferred = embedding3.embedding(news, preferred_news)
+    embedding_result_preferred, scores = embedding3.embedding(news, preferred_news)
     # # # embedding_result_unpreferred = embedding.embedding(news, unpreferred_news)
     
-    # with open("database/filtered_embedding_result.json", "w") as f:
-    #     json.dump(dumpd(embedding_result_preferred), f)
+    with open("database/filtered_embedding_result.json", "w") as f:
+        json.dump(dumpd(embedding_result_preferred), f)
+
+    with open("database/scores.json", "w") as f:
+        json.dump(dumpd(scores), f)
 
     with open("database/filtered_embedding_result.json", "r") as fp4:
         embedding_result_preferred = json.load(fp4)
@@ -47,7 +50,7 @@ def main():
         generate3.summarize(embedding_result_preferred)
     with open("database/summaries.json", "r") as fp:
         summaries = json.load(fp)
-        summary_list = summaries.split("SUMMARY:", 5)[1:]
+        summary_list = summaries.split("THREE SENTENCE SUMMARY:", 5)[1:]
         idx = 0
         for smry in summary_list:
             smry2 = smry.split("Write a summary of the following text delimited by triple backticks.")[0]

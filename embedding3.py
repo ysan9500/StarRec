@@ -60,11 +60,11 @@ def embedding(docs_news, docs_preference):
     if vectorstore_preference and vectorstore_news:
         for doc_preference in docs_preference:
             query_content = doc_preference.page_content
-            similar_docs = vectorstore_news.similarity_search(query_content, k=5)
-            most_similar_contents.extend(similar_docs)
+            similar_docs_with_scores = vectorstore_news.similarity_search_with_score(query_content, k=5)
+            similar_docs = [similar_doc_with_score[0] for similar_doc_with_score in similar_docs_with_scores]
+            scores = [100/(similar_doc_with_score[1]+1) for similar_doc_with_score in similar_docs_with_scores]
 
-
-    return most_similar_contents[:5]
+    return similar_docs[:5], scores[:5]
 
 
 
@@ -76,8 +76,9 @@ if __name__=='__main__':
     with open("database/unpreferred_news.json", "r") as fp3:
         unpreferred_news = loads(json.load(fp3))
 
-    embedding_result = embedding(news, preferred_news)
-    print(type(embedding_result))
-    print(type(embedding_result[0]))
-    print(len(embedding_result))
-    print(embedding_result)
+    embedding_result, scores= embedding(news, preferred_news)
+    print(scores)
+    # print(type(embedding_result))
+    # print(type(embedding_result[0]))
+    # print(len(embedding_result))
+    # print(embedding_result)

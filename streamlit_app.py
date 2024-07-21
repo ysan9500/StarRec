@@ -67,14 +67,15 @@ else:
             st.error(f"Error decoding JSON: {e}")
             filtered_embedding_result_json = []
     if isinstance(filtered_embedding_result_json, list):
-        st.title("News recommender system")
+        title = st.title("⭐StarRec")
         day_name = datetime.today().strftime("%A")
         keywords = scrap.get_keywords("Monday")
         keyword_text = ""
         for keyword in keywords:
             keyword_text = keyword_text + keyword + ", "
         keyword_text = keyword_text[:-2]
-        st.header(f"Today's keywords: {keyword_text}")
+        st.header(f"Today's keywords:")
+        st.header(f"{keyword_text}")
         # CSS 스타일 추가
         st.markdown(
             """
@@ -123,6 +124,13 @@ else:
             with open("database/summary_list.json", "r") as fp:
                 summary_list = json.load(fp).split("\n", 5)[1:]
 
+            with open("database/scores.json", "r") as fp:
+                scores = json.load(fp)
+            score = scores[idx0]
+            star = ""
+            for i in range(int((score - 30)/2.5)):
+                star += "⭐"
+
             ttt = summary_list[idx0].replace("\",","").replace("\"", "").replace("[","").replace("]","").strip("[]\\n")
             st.markdown(
                 f"""
@@ -134,6 +142,7 @@ else:
                     </div>
                     <div class="news-right">
                         <p>{ttt}</p>
+                        <p>{star}(Similarity: {score:.2f}%)</p>
                     </div>
                 </div>
                 """,
