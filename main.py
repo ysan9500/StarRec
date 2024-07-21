@@ -8,16 +8,18 @@
 from dotenv import load_dotenv, dotenv_values
 import scrap
 import load_news
-import embedding
+import embedding2
+import embedding3
 import generate3
 from langchain_core.load import dumpd, dumps, load, loads
+import load_news
 import json
 
 
 def main():
     load_dotenv() 
     # scrap.scrap()
-    # news = load.load_news()
+    # news = load_news.load_news()
     # preferred_news = load_news.load_preference(3)
     # unpreferred_news = load_news.load_preference(1)
 
@@ -27,42 +29,40 @@ def main():
         preferred_news = loads(json.load(fp2))
     with open("database/unpreferred_news.json", "r") as fp3:
         unpreferred_news = loads(json.load(fp3))
-    #
-    # embedding_result = embedding.embedding(news, preferred_news)
-    print(type(news[0]))
-    print(type(preferred_news[0]))
-    print(type(unpreferred_news[0]))
 
-    # 임베딩 처리
-    # embedding_result_preferred = embedding.embedding(news, preferred_news)
-    # embedding_result_unpreferred = embedding.embedding(news, unpreferred_news)
+    # print(type(news[0]))
+    # print(type(preferred_news[0]))
+    # print(type(unpreferred_news[0]))
 
-    # # 선호 뉴스와 비선호 뉴스의 중복 제거
-    # unpreferred_set = {doc for doc in embedding_result_unpreferred}
-    # filtered_embedding_result = [
-    #     doc for doc in embedding_result_preferred
-    #     if doc not in unpreferred_set
-    # ]
+    # # 임베딩 처리
+    # embedding_result_preferred = embedding3.embedding(news, preferred_news)
+    # # # embedding_result_unpreferred = embedding.embedding(news, unpreferred_news)
     
-    # # 디버깅: 중복 제거된 결과 확인
-    # print(f"Filtered Embedding Result Count: {len(filtered_embedding_result)}")
-    # if filtered_embedding_result:
-    #     print(f"First Element: {filtered_embedding_result[0]}")
+    # with open("database/filtered_embedding_result.json", "w") as f:
+    #     json.dump(dumpd(embedding_result_preferred), f)
 
-    # 요약 생성
-    
-    #generate3.summarize(embedding_result_preferred)
+    with open("database/filtered_embedding_result.json", "r") as fp4:
+        embedding_result_preferred = json.load(fp4)
+        print(embedding_result_preferred[0]["kwargs"])
+        generate3.summarize(embedding_result_preferred)
     with open("database/summaries.json", "r") as fp:
         summaries = json.load(fp)
         summary_list = summaries.split("SUMMARY:", 5)[1:]
         idx = 0
         for smry in summary_list:
             smry2 = smry.split("Write a summary of the following text delimited by triple backticks.")[0]
-            smry3 = smry2.replace("\\n", "").replace("  ", "").replace("THE", "")
-            summary_list[idx] = smry3
+            smry3 = smry2.split("SOURCE")[0]
+            smry4 = smry3.replace("\\n", "").replace("  ", "").replace("THE", "").replace("\"", "").replace(".,", ".").replace("\\t","").replace("\\", " ")
+            summary_list[idx] = smry4
             idx += 1
+        print(summary_list[0])
         string_representation = dumps(summary_list, pretty=True)
         with open("database/summary_list.json", "w") as fp:
             json.dump(string_representation, fp)
+
+        with open("database/summary_list.json", "r") as fp:
+                summary_list = json.load(fp).split("\n", 5)
+                for a in summary_list:
+                    print(a)
 if __name__ == "__main__":
     main()

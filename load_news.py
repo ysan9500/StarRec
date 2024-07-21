@@ -29,9 +29,17 @@ def load_news():
         loader = WebBaseLoader(links, header_template=headers, verify_ssl=True, continue_on_failure=True,)
         loader.requests_per_second = 10
         docs = loader.aload()
-        docs_text = [doc.page_content.replace("\n","") for doc in docs]
-        docs = [Document(page_content=doc_text) for doc_text in docs_text]
-        string_representation = dumps(docs, pretty=True)
+        cleaned_docs = []
+        for doc in docs:
+            doc_text = doc.page_content.replace("\n","")
+            docs_metadata = doc.metadata
+            cleaned_doc = Document(page_content=doc_text, metadata=docs_metadata)
+            cleaned_docs.append(cleaned_doc)
+
+
+        # docs_text = [doc.page_content.replace("\n","") for doc in docs]
+        # docs = [Document(page_content=doc_text) for doc_text in docs_text]
+        string_representation = dumps(cleaned_docs, pretty=True)
         with open("database/news.json", "w") as fp:
             json.dump(string_representation, fp)
         #print(doc)
@@ -54,10 +62,19 @@ def load_preference(num):
     loader = WebBaseLoader(selected_links, header_template=headers, verify_ssl=True, continue_on_failure=True,)
     loader.requests_per_second = 10
     docs = loader.aload()
-    docs_text = [doc.page_content.replace("\n","") for doc in docs]
-    docs = [Document(page_content=doc_text) for doc_text in docs_text]
+    cleaned_docs = []
+    for doc in docs:
+        doc_text = doc.page_content.replace("\n","").replace("\\", "")
+        docs_metadata = doc.metadata
+        cleaned_doc = Document(page_content=doc_text, metadata=docs_metadata)
+        cleaned_docs.append(cleaned_doc)
 
-    string_representation = dumps(docs, pretty=True)
+
+    # docs_text = [doc.page_content.replace("\n","") for doc in docs]
+    # docs_metadata = [doc.metadata for doc in docs]
+    # docs = [Document(page_content=doc_text, metadata = docs_metadata) for doc_text in docs_text]
+
+    string_representation = dumps(cleaned_docs, pretty=True)
     if num == 3:
         with open("database/preferred_news.json", "w") as fp:
             json.dump(string_representation, fp)
@@ -68,6 +85,6 @@ def load_preference(num):
 
 
 if __name__ == "__main__":
-    #load_news()
+    load_news()
     load_preference(3)
     load_preference(1)

@@ -1,42 +1,3 @@
-#streamlit_app.py
-# import streamlit as st
-# import json
-# import os
-#
-# # 파일 경로 설정
-# file_path = "database/filtered_embedding_result.json"
-#
-# # 파일이 존재하는지 확인
-# if not os.path.exists(file_path):
-#     st.error(f"File not found: {file_path}")
-# else:
-#     # JSON 파일에서 뉴스 데이터 로드
-#     with open(file_path, "r") as f:
-#         try:
-#             filtered_embedding_result_json = json.load(f)
-#         except json.JSONDecodeError as e:
-#             st.error(f"Error decoding JSON: {e}")
-#             filtered_embedding_result_json = []
-#
-#     # JSON 데이터 구조 확인 후 직접 표시
-#     if isinstance(filtered_embedding_result_json, list):
-#         st.title("추천 뉴스")
-#
-#         for doc in filtered_embedding_result_json:
-#             # JSON 데이터의 metadata에서 title, source, summary 추출
-#             metadata = doc.get("kwargs", {}).get("metadata", {})
-#             title = metadata.get("title", "제목 없음")
-#             link = metadata.get("source", "#")
-#
-#             # 제목을 링크로 만들어 표시
-#             if link != "#":
-#                 st.markdown(f"[{title}]({link})")
-#             else:
-#                 st.write(title)
-#
-#
-#     else:
-#         st.error("Unexpected JSON data structure.")
 import streamlit as st
 import json
 import os
@@ -44,6 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from dateutil import parser
+import scrap
+from datetime import datetime
+
 # 파일 경로 설정
 file_path = "database/filtered_embedding_result.json"
 def extract_news_details(url):
@@ -103,7 +67,14 @@ else:
             st.error(f"Error decoding JSON: {e}")
             filtered_embedding_result_json = []
     if isinstance(filtered_embedding_result_json, list):
-        st.title(":book:News recommender system")
+        st.title("News recommender system")
+        day_name = datetime.today().strftime("%A")
+        keywords = scrap.get_keywords("Monday")
+        keyword_text = ""
+        for keyword in keywords:
+            keyword_text = keyword_text + keyword + ", "
+        keyword_text = keyword_text[:-2]
+        st.header(f"Today's keywords: {keyword_text}")
         # CSS 스타일 추가
         st.markdown(
             """
@@ -149,8 +120,10 @@ else:
             else:
                 publish_date, publisher = "발행 날짜 없음", "출판사 없음"
             
-            with open("database/summary_list.json", "w") as fp:
-                summary_list = json.load(fp)
+            with open("database/summary_list.json", "r") as fp:
+                summary_list = json.load(fp).split("\n", 5)[1:]
+
+            ttt = summary_list[idx0].replace("\",","").replace("\"", "").replace("[","").replace("]","").strip("[]\\n")
             st.markdown(
                 f"""
                 <div class="news-container">
@@ -160,7 +133,7 @@ else:
                         <p>Publisher: {publisher}</p>
                     </div>
                     <div class="news-right">
-                        <p>{summary_list[idx0]}</p>
+                        <p>{ttt}</p>
                     </div>
                 </div>
                 """,

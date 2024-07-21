@@ -50,9 +50,9 @@ def summarize(news):
 
     template = """
                 Write a summary of the following text delimited by triple backticks.
-                Return your response which covers the key points of the text within 30 words.
+                Return your response which covers the key points of the text within three sentences.
                 ```{text}```
-                SUMMARY:
+                THREE SENTENCE SUMMARY:
             """
 
     prompt = PromptTemplate(template=template, input_variables=["text"])
@@ -61,7 +61,8 @@ def summarize(news):
     summaries = []
 
     for doc in news:
-        text = doc.page_content
+        print(doc["kwargs"].keys())
+        text = doc["kwargs"]["page_content"]
 
     # text = '''
     # vHorses have a funny way of keeping us on our toes, don’t they? Just when you think things are going one way, we constantly have to pivot another way.Our last update saw the big horse Mr Nobility getting ready to display his progress at the LongRun open house. Unfortunately, he had other plans. The day before the open house he had blood and mucus coming out of his nose. The next day, the morning of the open house, more mucus, coughing, and lots of blood pouring out of his nose. The veterinarian came out for an emergency endoscopy to see what was going on, and unfortunately didn’t really find much other than a very irritated soft palate and a lot of bloody mucus in the throat. Needless to say, we did not ride at the open house.\t\tMr Nobility naps in the weirdest places. (Courtesy of Lauren Millet-Simpson)\tSince we are getting down to the wire as such, we really needed to start going off property and experimenting with different adventures. My coach booked a schooling time at a local show barn for myself and her other student who is going to the Makeover for an off-property ride.The week leading up to going off property was one of the most frustrating weeks for us in a while.

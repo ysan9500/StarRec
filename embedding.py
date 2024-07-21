@@ -12,7 +12,7 @@ def embedding(docs_news, docs_preference):
     splitter = SentenceTransformersTokenTextSplitter()
 
     # Initialize the embedding model
-    embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+    embeddings = SentenceTransformerEmbeddings(model_name="all-mpnet-base-v2")
 
     # Create FAISS vector stores for preference and news documents
     vectorstore_preference = None
